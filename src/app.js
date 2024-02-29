@@ -17,23 +17,6 @@ routes(app)
 
 // ROUTES
 
-app.get("/livros/:id", async (req, res) => {
-    const livro = await livro.findById(req.params.id)
-    res.status(200).json(livro)
-})
-
-app.post("/livros", (req, res) => {
-    const livro = req.body
-    livros.push(livro)
-    res.status(201).send("Livro cadastrado com sucesso!")
-})
-
-app.put("/livros/:id", (req, res) => {
-    const index = buscaLivro(req.params.id)
-    livros[index].titulo = req.body.titulo
-    res.status(200).json(livros[index])
-})
-
 app.delete("/livros/:id", (req, res) => {
     const index = buscaLivro(req.params.id)
     livros.splice(index, 1)
