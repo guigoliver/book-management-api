@@ -2,14 +2,14 @@ import express from 'express'
 import conectaDatabase from './config/dbConnect.js'
 import routes from './routes/index.js'
 
-const conexao = await conectaDatabase()
+const connection = await conectaDatabase()
 
-conexao.on('error', (err) => {
-  console.error('erro de conexão: ', err)
+connection.on('error', (err) => {
+  console.error('connection failed: ', err)
 })
 
-conexao.once('open', () => {
-  console.log('Conectado com sucesso ao banco de dados!')
+connection.once('open', () => {
+  console.log('Connected to database!')
 })
 
 const app = express()
