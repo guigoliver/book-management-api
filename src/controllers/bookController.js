@@ -11,53 +11,53 @@ class BookController {
     }
   }
 
-  static listBookById = async (req, res) => {
+  static listBookById = async (req, res, next) => {
     try {
       const id = req.params.id
       const foundBook = await books.findById(id)
       res.status(200).json(foundBook)
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Book not found` })
+      next(error)
     }
   }
 
-  static addBook = async (req, res) => {    
+  static addBook = async (req, res, next) => {    
     try {
       const newBook = new books(req.body)
       const resultBook = await newBook.save()
       res.status(201).json({ message: 'Book successfully created', livro: resultBook})            
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Adding book failed` })
+      next(error)
     }
   }
 
-  static updateBook = async (req, res) => {
+  static updateBook = async (req, res, next) => {
     try {
       const id = req.params.id
       await books.findByIdAndUpdate(id, req.body)
       res.status(200).json({message: 'Book updated'})            
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Update failed` })
+      next(error)
     }
   }
 
-  static deleteBook = async (req, res) => {
+  static deleteBook = async (req, res, next) => {
     try {
       const id = req.params.id
       await books.findByIdAndDelete(id)
       res.status(200).json({message: 'Book deleted'})            
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Deleted failed` })
+      next(error)
     }
   }
 
-  static listBooksByPublisher = async (req, res) => {
+  static listBooksByPublisher = async (req, res, next) => {
     try {
       const publisher = req.query.publisher
       const booksFound = await books.find({ 'publisher': publisher })
       res.status(200).json(booksFound)            
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Request failed` })
+      next(error)
     }
   }
 }
