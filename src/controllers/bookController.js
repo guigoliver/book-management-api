@@ -1,3 +1,4 @@
+import NotFound from '../errors/NotFound.js'
 import books from '../models/Book.js'
 
 class BookController {
@@ -15,7 +16,13 @@ class BookController {
     try {
       const id = req.params.id
       const foundBook = await books.findById(id)
-      res.status(200).json(foundBook)
+        .populate('author', 'name')
+        .exec()
+      if (foundBook !== null) {
+        res.status(200).json(foundBook)
+      } else {
+        next(new NotFound('Book not found.'))
+      }
     } catch (error) {
       next(error)
     }
@@ -34,8 +41,13 @@ class BookController {
   static updateBook = async (req, res, next) => {
     try {
       const id = req.params.id
-      await books.findByIdAndUpdate(id, req.body)
-      res.status(200).json({message: 'Book updated'})            
+      const foundBook = await books.findByIdAndUpdate(id, req.body)
+      
+      if (foundBook !== null) {
+        res.status(200).json({message: 'Book updated'})
+      } else {
+        next(new NotFound('Book not found.'))
+      }
     } catch (error) {
       next(error)
     }
@@ -44,8 +56,13 @@ class BookController {
   static deleteBook = async (req, res, next) => {
     try {
       const id = req.params.id
-      await books.findByIdAndDelete(id)
-      res.status(200).json({message: 'Book deleted'})            
+      const foundBook = await books.findByIdAndDelete(id)
+
+      if (foundBook !== null) {
+        res.status(200).json({message: 'Book deleted'})
+      } else {
+        next(new NotFound('Book not found.'))
+      }
     } catch (error) {
       next(error)
     }
