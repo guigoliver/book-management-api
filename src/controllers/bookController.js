@@ -3,12 +3,19 @@ import { authors, books } from '../models/index.js'
 
 class BookController {
 
-  static listBooks = async (req, res) => {
+  static listBooks = async (req, res, next) => {
     try {
+      const { pageSize = 5, pageIndex = 1 } = req.query
+
       const booksList = await books.find({})
+        .skip((pageIndex - 1) * pageSize)
+        .limit(pageSize) 
+        .populate('author')
+        .exec()
+
       res.status(200).json(booksList)            
     } catch (error) {
-      res.status(500).json({ message: `${error.message} - Request failed` })
+      next(error)
     }
   }
 
