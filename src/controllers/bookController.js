@@ -1,5 +1,5 @@
 import NotFound from '../errors/NotFound.js'
-import { books } from '../models/index.js'
+import { authors, books } from '../models/index.js'
 
 class BookController {
 
@@ -68,15 +68,45 @@ class BookController {
     }
   }
 
-  static listBooksByPublisher = async (req, res, next) => {
+  static listBooksByFilter = async (req, res, next) => {
     try {
-      const publisher = req.query.publisher
-      const booksFound = await books.find({ 'publisher': publisher })
-      res.status(200).json(booksFound)            
+      const search = await processSearch(req.query) 
+
+      if (search !== null) {
+        const booksFound = await books
+          .find(search)
+          .populate('author')
+        res.status(200).json(booksFound)
+      } else {
+        res.status(200).send([])
+      }                
     } catch (error) {
       next(error)
     }
+  }  
+}
+
+async function processSearch(params) {
+  const { publisher, title, minPages, maxPages, authorName } = params
+  
+  let search = {}
+  if (publisher) search.publisher = publisher
+  if (title) search.title = new RegExp(title, 'i')
+
+  if (minPages || maxPages) search.numberOfPages = {}
+  if (minPages) search.numberOfPages.$gte = { minPages }
+  if (maxPages) search.numberOfPages.$lte = { maxPages }
+
+  if (authorName) {
+    const author = await authors.findOne({ name: authorName})
+    if (author !== null) {      
+      search.author = author._id
+    } else {
+      search = null
+    }    
   }
+  
+  return search
 }
 
 export default BookController
