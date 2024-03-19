@@ -16,8 +16,6 @@ class BookController {
     try {
       const id = req.params.id
       const foundBook = await books.findById(id)
-        .populate('author', 'name')
-        .exec()
       if (foundBook !== null) {
         res.status(200).json(foundBook)
       } else {
@@ -73,9 +71,7 @@ class BookController {
       const search = await processSearch(req.query) 
 
       if (search !== null) {
-        const booksFound = books
-          .find(search)
-          .populate('author')
+        const booksFound = books.find(search)          
 
         req.result = booksFound
 
