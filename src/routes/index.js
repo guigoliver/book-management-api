@@ -3,7 +3,7 @@ import books from './booksRoutes.js'
 import authors from './authorsRoutes.js'
 
 const routes = (app) => {
-  app.route('/').get((req, res) => res.status(200).send('Node Course'))
+  app.route('/').get((req, res) => res.status(200).send('ReBooks API'))
 
   app.use(express.json(), books, authors)   
 }
