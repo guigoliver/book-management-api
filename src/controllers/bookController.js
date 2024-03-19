@@ -1,31 +1,12 @@
 import NotFound from '../errors/NotFound.js'
 import { authors, books } from '../models/index.js'
-import IncorrectRequest from '../errors/IncorrectRequest.js'
 
 class BookController {
 
   static listBooks = async (req, res, next) => {
     try {
-      let { pageSize = 5, pageIndex = 1, ordination = '_id:-1' } = req.query
-
-      let [orderByField, order] = ordination.split(':')
-
-      pageSize = parseInt(pageSize)
-      pageIndex = parseInt(pageIndex)
-      order = parseInt(order)
-
-      if (pageSize > 0 && pageIndex > 0) {
-        const booksList = await books.find()
-          .sort({ [orderByField]: order})
-          .skip((pageIndex - 1) * pageSize)
-          .limit(pageSize) 
-          .populate('author')
-          .exec()
-
-        res.status(200).json(booksList) 
-      } else {
-        next(new IncorrectRequest('Page size and page index must be greater than 0.'))
-      }                 
+      const booksSearch = books.find()
+      req.result = booksSearch        
     } catch (error) {
       next(error)
     }
@@ -92,10 +73,13 @@ class BookController {
       const search = await processSearch(req.query) 
 
       if (search !== null) {
-        const booksFound = await books
+        const booksFound = books
           .find(search)
           .populate('author')
-        res.status(200).json(booksFound)
+
+        req.result = booksFound
+
+        next()
       } else {
         res.status(200).send([])
       }                

@@ -1,11 +1,12 @@
 import express from 'express'
 import BookController from '../controllers/bookController.js'
+import paginate from '../middlewares/paginate.js'
 
 const routes = express.Router()
 
-routes.get('/books', BookController.listBooks)
+routes.get('/books', BookController.listBooks, paginate)
 
-routes.get('/books/search', BookController.listBooksByFilter)
+routes.get('/books/search', BookController.listBooksByFilter, paginate)
 
 routes.get('/books/:id', BookController.listBookById)
 

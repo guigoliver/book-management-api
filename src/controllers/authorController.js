@@ -3,10 +3,13 @@ import { authors } from '../models/index.js'
 
 class AuthorController {
 
-  static listAuthors = async (req, res) => {
+  static listAuthors = async (req, res, next) => {
     try {
-      const foundAuthors = await authors.find({})
-      res.status(200).json(foundAuthors)            
+      const foundAuthors = authors.find({})
+      
+      req.result = foundAuthors
+      
+      next()
     } catch (error) {
       res.status(500).json({ message: `${error.message} - Request failed` })
     }
